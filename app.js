@@ -4,6 +4,7 @@ var path = require("path");
 // var logger = require("morgan");
 // var bodyParser = require("body-parser");
 var phone_number = require("./routes/phone_number");
+var provider = require("./routes/provider");
 
 // require("./socket/index");
 
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: "false" }));
 // app.use(cors());
 
 app.use("/api/phone_number", phone_number);
+app.use("/api/provider", provider);
 // catch 404 and forward to error handler
 app.use("/api", function(req, res, next) {
   var err = new Error("API Not Found");
