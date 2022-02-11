@@ -37,10 +37,7 @@ app.use("/api", function(req, res, next) {
 
 // catch 404 and redirect to error 404 page
 app.use(function(req, res, next) {
-  var err = new Error("Page Not Found");
-  err.status = 404;
   res.redirect("/");
-  next(err);
 });
 
 // error handler
