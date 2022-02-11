@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const PhoneNumber = require("../models").PhoneNumber;
+const Provider = require("../models").Provider;
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
@@ -8,7 +9,8 @@ router.get("/", function(req, res) {
   PhoneNumber.findAll({
     include: [{
       association: "provider"
-    }]
+    }],
+    order: [['id', 'ASC']]
   })
     .then(phone_numbers => {
       if (phone_numbers.length) {
@@ -34,9 +36,7 @@ router.get("/", function(req, res) {
 router.post("/", function(req, res) {
   PhoneNumber.create({
     number: req.body.number,
-    provider_id: req.body.provider_id,
-    telepon: req.body.telepon,
-    namespace: req.body.namespace
+    provider_id: req.body.provider_id
   })
     .then(phone_number =>
       res.status(201).send({
@@ -50,6 +50,35 @@ router.post("/", function(req, res) {
         msg: error
       });
     });
+});
+
+
+router.post("/auto", async function(req, res) {
+  const providers = await Provider.findAll();
+  const provider_id_array = await providers.map(provider => {
+    return provider.id;
+  })
+  try {
+    for (let i = 1; i < 501; i++) {
+      const newDAta = {
+        number: Math.floor(Math.random() * (89999999999 - 81000000000) ) + 81000000000,
+        provider_id: await provider_id_array[Math.floor(Math.random() * provider_id_array.length)]
+      }
+      PhoneNumber.create(newDAta).then(() => {
+        if(i == 500) {
+          res.status(200).send({
+            success: true
+          });
+        }
+      })
+    }
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      msg: error
+    });
+  }
+
 });
 
 router.get("/:id", function(req, res) {
@@ -101,6 +130,25 @@ router.put("/:id", function(req, res) {
           msg: phone_number
         });
       }
+    })
+    .catch(async error =>
+      res.status(400).send({
+        success: false,
+        msg: error
+      })
+    );
+});
+
+router.delete("/all", function(req, res) {
+  PhoneNumber.destroy({
+    where: {},
+    truncate: true
+  })
+    .then(phone_number => {
+      res.status(200).send({
+        success: true,
+        msg: "Data nomor telefon telah dihapus"
+      });
     })
     .catch(async error =>
       res.status(400).send({
