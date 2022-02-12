@@ -6,7 +6,7 @@ var path = require("path");
 var phone_number = require("./routes/phone_number");
 var provider = require("./routes/provider");
 
-// require("./socket/index");
+require("./socket/index");
 
 var app = express();
 

@@ -61,8 +61,9 @@ export default{
                 this.http.post('/phone_number', this.inputData)
                 .then(response => {
                     console.log(response.data)
-                    alert('Data telah disimpan.')
-                    this.$router.push('/output')
+                    this.$socket.emit("new_data_from_server", response.data.msg);
+                    // alert('Data telah disimpan.')
+                    // this.$router.push('/output')
                 })
                 .catch(error => {
                     alert("Error")

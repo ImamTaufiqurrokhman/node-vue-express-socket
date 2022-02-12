@@ -3,6 +3,7 @@ import { inject, toRefs } from "vue";
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from '@/components/HelloWorld.vue'
 import 'bootstrap/scss/bootstrap.scss'
+import sound from './assets/sms-alert-1-daniel_simon.wav'
 
 export default {
   name: "JtiTestNode",
@@ -19,7 +20,6 @@ export default {
       user: '',
     }
   },
-
   methods: {
     async handleClickSignIn(){
       try {
@@ -52,6 +52,16 @@ export default {
         console.error(error);
       }
       this.$router.push('/')
+    },
+    notification() {
+      const audio = new Audio(sound)
+      audio.play()
+      .then(() => {
+        let confirmation = confirm("Data is stored. Would you like to check it?")
+        if (confirmation) {
+          this.$router.push("/output")
+        }
+      })
     }
   },
   setup(props) {
@@ -65,6 +75,19 @@ export default {
       isSignIn,
     };
   },
+  created() {
+    this.$socket.on("connect", () => {
+      console.log(this.$socket.id);
+    });
+
+    this.$socket.on("disconnect", () => {
+      console.log(this.$socket.id);
+    });
+
+    this.$socket.on("new_data_from_server", (arg) => {
+      this.notification()
+    });
+  }
 };
 </script>
 
@@ -82,13 +105,7 @@ export default {
             <li><RouterLink to="/input" v-show="Vue3GoogleOauth.isAuthorized" class="nav-link px-2 text-white">Input</RouterLink></li>
             <li><RouterLink to="/output" v-show="Vue3GoogleOauth.isAuthorized" class="nav-link px-2 text-white">Output</RouterLink></li>
           </ul>
-
-          <!-- <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
-            <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
-          </form> -->
-
           <div class="text-end">
-            <!-- <button type="button" class="btn btn-outline-light me-2">Login</button> -->
             <button v-show="Vue3GoogleOauth.isAuthorized" @click="handleClickSignOut" type="button" class="btn btn-danger">Sign-out</button>
           </div>
         </div>
@@ -98,24 +115,4 @@ export default {
       <RouterView />
     </main>
   </div>
-    <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-      <div>
-        <h1>IsInit: {{ Vue3GoogleOauth.isInit }}</h1>
-        <h1>IsAuthorized: {{ Vue3GoogleOauth.isAuthorized }}</h1>
-        <h2 v-if="user">signed user: {{user}}</h2>
-        <button @click="handleClickSignIn" :disabled="!Vue3GoogleOauth.isInit || Vue3GoogleOauth.isAuthorized">sign in</button>
-        <button @click="handleClickSignOut" :disabled="!Vue3GoogleOauth.isAuthorized">sign out</button>
-      </div>
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-
-      </nav>
-    </div>
-
-   -->
 </template>
