@@ -60,8 +60,11 @@ export default{
             if(this.inputData.number && this.inputData.provider_id) {
                 this.http.post('/phone_number', this.inputData)
                 .then(response => {
-                    console.log(response.data)
                     this.$socket.emit("new_data_from_server", response.data.msg);
+                    alert('Data telah disimpan.')
+                    console.log(response.data)
+                    this.inputData.number = null;
+                    this.inputData.provider_id = 0;
                     // alert('Data telah disimpan.')
                     // this.$router.push('/output')
                 })
@@ -76,9 +79,9 @@ export default{
         autoCreateData() {
             this.http.post('/phone_number/auto', this.inputData)
             .then(response => {
+                this.$socket.emit("new_data_from_server", response.data.msg);
                 alert('Data telah disimpan.')
                 console.log(response.data)
-                this.$router.push('/output')
             })
             .catch(error => {
                 alert("Error")
