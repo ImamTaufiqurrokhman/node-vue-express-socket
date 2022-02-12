@@ -3,7 +3,7 @@ import { inject, toRefs } from "vue";
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from '@/components/HelloWorld.vue'
 import 'bootstrap/scss/bootstrap.scss'
-import sound from './assets/sms-alert-1-daniel_simon.wav'
+
 
 export default {
   name: "JtiTestNode",
@@ -52,16 +52,6 @@ export default {
         console.error(error);
       }
       this.$router.push('/')
-    },
-    notification() {
-      const audio = new Audio(sound)
-      audio.play()
-      .then(() => {
-        let confirmation = confirm("Data is stored. Would you like to check it?")
-        if (confirmation) {
-          this.$router.push("/output")
-        }
-      })
     }
   },
   setup(props) {
@@ -84,9 +74,9 @@ export default {
       console.log(this.$socket.id);
     });
 
-    this.$socket.on("new_data_from_server", (arg) => {
-      this.notification()
-    });
+    // this.$socket.on("new_data_from_server", (arg) => {
+    //   this.notification()
+    // });
   }
 };
 </script>

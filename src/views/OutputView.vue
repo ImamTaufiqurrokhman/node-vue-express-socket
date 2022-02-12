@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import sound from '@/assets/sms-alert-1-daniel_simon.wav'
 export default {
     name: "OutputView",
     data() {
@@ -137,6 +138,10 @@ export default {
         },
         editPhoneNumber(phone_number_id) {
             this.$router.push('/edit/' + phone_number_id)
+        },
+        notification() {
+            const audio = new Audio(sound)
+            audio.play()
         }
     },
     inject: ['Vue3GoogleOauth'],
@@ -146,8 +151,10 @@ export default {
         } else {
             this.getPhoneNumber()
         }
-
-        setInterval(this.getPhoneNumber(), 1000);
+        this.$socket.on("new_data_from_server", (arg) => {
+            this.getPhoneNumber()
+            this.notification()
+        });
     }
 }
 </script>
