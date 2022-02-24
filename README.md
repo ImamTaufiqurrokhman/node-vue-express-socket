@@ -1,4 +1,4 @@
-# Welcome to JTI Test Node App
+# Welcome to Node Vue Express Socket App
 
 To run this app, please do follow the instructions bellow!
 
